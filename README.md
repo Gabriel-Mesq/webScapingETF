@@ -1,5 +1,5 @@
 # Web Scaping de ETFs
-Um código que recolhe dados de ETFs pelo mundo todo por meio do site etf.com
+Um código que recolhe dados de rentabilidade e performance de ETFs pelo mundo todo por meio do site etf.com
 
 ## ⚠️ ATENÇÃO: Este código está fora de funcionamento ⚠️
 Esse projeto foi desenvolvido para praticar web scraping, limpeza e organização de dados. Seu propósito já foi cumprido.
