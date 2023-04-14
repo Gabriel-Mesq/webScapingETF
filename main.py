@@ -51,9 +51,22 @@ for pagina in range(1, numero_paginas + 1):
 tabela_rentabilidade_etfs = pd.concat(lista_tabela_por_pagina)
 tabela_rentabilidade_etfs
 driver.quit()
+
+tabela_cadastro_etfs = tabela_cadastro_etfs.set_index('Ticker')
 tabela_rentabilidade_etfs = tabela_rentabilidade_etfs.set_index("Ticker")
 tabela_rentabilidade_etfs = tabela_rentabilidade_etfs[['1 Year', '3 Years', '5 Years']]
-tabela_cadastro_etfs = tabela_cadastro_etfs.set_index("Ticker")
-base_de_dados_final = tabela_cadastro_etfs.join(tabela_rentabilidade_etfs, how = 'inner')
+tabela_rentabilidade_etfs = tabela_rentabilidade_etfs.replace("--", pd.NA)
+tabela_rentabilidade_etfs = tabela_rentabilidade_etfs.dropna()
+for coluna in tabela_rentabilidade_etfs.columns:
+    tabela_rentabilidade_etfs[coluna] = tabela_rentabilidade_etfs[coluna].str.rstrip("%").astype(float)/100
+base_final = tabela_cadastro_etfs.join(tabela_rentabilidade_etfs, how = "inner")
+base_final = base_final[~base_final['Segment'].str.contains("Leveraged")]
+base_final['rank_1_anos'] = base_final['1 Year'].rank(ascending = False)
+base_final['rank_3_anos'] = base_final['3 Years'].rank(ascending = False)
+base_final['rank_5_anos'] = base_final['5 Years'].rank(ascending = False)
+base_final['rank_final'] = (base_final['rank_1_anos'] + 
+                                  base_final['rank_3_anos'] + 
+                                  base_final['rank_5_anos'])
+base_final = base_final.sort_values(by = "rank_final")
 
-print(base_de_dados_final)
+print(base_final.head(20))
